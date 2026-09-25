@@ -69,6 +69,7 @@ export async function fetchRepo(owner: string, name: string) {
 }
 
 const FEATURED = [
+  "warehouse-order-system",
   "SveabyggpartnerAB",
   "washify",
   "portfolio",

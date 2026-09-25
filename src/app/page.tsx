@@ -1,5 +1,5 @@
 import HeroSplit from "@/components/hero-split";
-import FeaturedCard from "@/components/featured-card";
+import ProjectCarousel from "@/components/project-carousel";
 import { fetchFeaturedRepos } from "@/lib/github";
 import ContactForm from "@/components/contact-form";
 import PageBg from "@/components/page-bg";
@@ -22,11 +22,7 @@ export default async function HomePage() {
             <h2 className="text-2xl font-semibold mb-6">Featured Projects</h2>
           </Reveal>
           <Reveal>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featured.map((p) => (
-                <FeaturedCard key={p.slug} p={p} />
-              ))}
-            </div>
+            <ProjectCarousel items={featured} />
           </Reveal>
           <Reveal>
             <div className="flex justify-center mt-10">
