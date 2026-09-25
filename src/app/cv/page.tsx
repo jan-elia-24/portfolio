@@ -7,9 +7,22 @@ import { AnimatePresence, motion } from "framer-motion";
 const experience = [
   {
     period: "2026",
+    title: "Warehouse Order System",
+    org: "Java 21 · Spring Boot 4.1 · Spring Data JPA · PostgreSQL",
+    location: "Project",
+    tags: ["Java", "SQL"],
+    bullets: [
+      "Built a warehouse and order management backend with REST APIs for articles, inventory, orders, and order lines (full CRUD).",
+      "Modeled a relational schema in PostgreSQL across four entities (Article, Warehouse, Order, OrderLine) via Spring Data JPA/Hibernate.",
+      "Added scheduled batch jobs to report inventory status and alert on low stock, plus unit tests with JUnit 5 and MockMvc.",
+    ],
+  },
+  {
+    period: "2026",
     title: "Svea Byggpartner AB",
     org: "Next.js 15 · Tailwind CSS · Framer Motion",
     location: "Project · Company Website",
+    tags: ["JavaScript"],
     bullets: [
       "Built a professional business website for a handcraft and carpentry company using Next.js 15 and Tailwind CSS.",
       "Implemented smooth animations and transitions with Framer Motion for an engaging user experience.",
@@ -21,6 +34,7 @@ const experience = [
     title: "Washify – Car Wash Booking System",
     org: "Next.js 15 · TypeScript · Supabase · Tailwind CSS",
     location: "Thesis Project",
+    tags: ["JavaScript", "SQL"],
     bullets: [
       "Developed a mobile-first car wash booking system as a final thesis project.",
       "Built with Next.js 15 and TypeScript, backed by Supabase for authentication and database management.",
@@ -32,6 +46,7 @@ const experience = [
     title: "Artist Booking Site",
     org: "WordPress · Gutenberg · ACF · CPT UI · Ninja Forms",
     location: "LIA Internship @ Webbkompaniet",
+    tags: ["WordPress"],
     bullets: [
       "Built a custom artist booking site using the Frost FSE theme with tailored Gutenberg blocks (artist-list, artist-single).",
       "Managed custom post types and advanced fields via CPT UI and ACF for structured artist data.",
@@ -43,6 +58,7 @@ const experience = [
     title: "Portfolio & Open-Source (Full-Stack Developer)",
     org: "Next.js · React  · Node · Tailwind · Resend",
     location: "Project",
+    tags: ["JavaScript"],
     bullets: [
       "Built a dynamic portfolio with GitHub integration, case-studies, and SSR.",
       "Designed premium UX: page transitions, scroll reveal, cursor glow/trail, animated toasts.",
@@ -54,6 +70,7 @@ const experience = [
     title: "BookBreeze – Book CRUD App with Auth",
     org: "Angular 20 · .NET 9 API · JWT · Bootstrap",
     location: "Project",
+    tags: ["JavaScript", ".NET"],
     bullets: [
       "Full-stack book management: create, edit, delete with JWT authentication.",
       "Separate 'My Quotes' view, dark mode, responsive navbar, and 404 page.",
@@ -65,6 +82,7 @@ const experience = [
     title: "Kino – Cinema Site (SSR)",
     org: "Node.js · Pug · Integration tests",
     location: "Group Project",
+    tags: ["JavaScript"],
     bullets: [
       "Server-rendered movie pages from API with dynamic routes and error handling.",
       "Wrote integration tests to verify titles and HTTP status for not-found pages.",
@@ -75,6 +93,7 @@ const experience = [
     title: "Wordle-Style Game (Full-Stack)",
     org: "React · Node/Express · MongoDB · EJS",
     location: "Project",
+    tags: ["JavaScript"],
     bullets: [
       "Color-feedback engine, timer/attempts, and server-rendered high scores.",
       "Added deterministic tests by mocking word randomization.",
@@ -85,12 +104,15 @@ const experience = [
     title: "Warehouse Product Manager (CRUD)",
     org: "Angular 20 · .NET 9 API",
     location: "Project",
+    tags: ["JavaScript", ".NET"],
     bullets: [
       "JWT-protected API, optimistic UI updates, and typed client models.",
       "Built CI-friendly structure and modular feature routing.",
     ],
   },
 ];
+
+const experienceTags = ["Java", "JavaScript", ".NET", "SQL", "WordPress"] as const;
 
 const education = [
   {
@@ -169,6 +191,7 @@ export default function CVPage() {
   const experienceHovered = hoveredExpYear !== null;
   const [educationHovered, setEducationHovered] = useState(false);
   const [openYears, setOpenYears] = useState<Record<string, boolean>>({});
+  const [activeTag, setActiveTag] = useState<string | null>(null);
 
   const toggleYear = (year: string) =>
     setOpenYears((prev) => ({ ...prev, [year]: !prev[year] }));
@@ -182,7 +205,11 @@ export default function CVPage() {
     };
   }, [pdfOpen, diplomaOpen]);
 
-  const years = [...new Set(experience.map((e) => e.period.slice(0, 4)))].sort(
+  const filteredExperience = activeTag
+    ? experience.filter((e) => e.tags.includes(activeTag))
+    : experience;
+
+  const years = [...new Set(filteredExperience.map((e) => e.period.slice(0, 4)))].sort(
     (a, b) => Number(b) - Number(a)
   );
   const latestYear = years[0];
@@ -240,11 +267,34 @@ export default function CVPage() {
               }}
             >
               <h2 className="text-xl font-semibold mb-4">Experience</h2>
-              <Timeline
-                items={experience.filter((e) => e.period.startsWith(latestYear))}
-                onHoverChange={(h) => setHoveredExpYear(h ? latestYear : null)}
-                dimmed={educationHovered || (hoveredExpYear !== null && hoveredExpYear !== latestYear)}
-              />
+              <div className="flex flex-wrap gap-2 mb-5">
+                {experienceTags.map((tag) => {
+                  const active = activeTag === tag;
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => setActiveTag(active ? null : tag)}
+                      className={`text-xs px-3 py-1 rounded-full border transition-all duration-200 ${
+                        active
+                          ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
+                          : "border-white/15 bg-neutral-900/60 text-neutral-300 hover:border-emerald-400/50 hover:text-emerald-300"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+              {years.length === 0 && (
+                <p className="text-sm text-neutral-500">No projects match this filter.</p>
+              )}
+              {latestYear && (
+                <Timeline
+                  items={filteredExperience.filter((e) => e.period.startsWith(latestYear))}
+                  onHoverChange={(h) => setHoveredExpYear(h ? latestYear : null)}
+                  dimmed={educationHovered || (hoveredExpYear !== null && hoveredExpYear !== latestYear)}
+                />
+              )}
               {olderYears.map((year) => (
                 <div key={year} className="mt-6">
                   <button
@@ -274,7 +324,7 @@ export default function CVPage() {
                         style={{ overflowX: "visible", overflowY: "hidden" }}
                       >
                         <Timeline
-                          items={experience.filter((e) => e.period.startsWith(year))}
+                          items={filteredExperience.filter((e) => e.period.startsWith(year))}
                           onHoverChange={(h) => setHoveredExpYear(h ? year : null)}
                           dimmed={educationHovered || (hoveredExpYear !== null && hoveredExpYear !== year)}
                         />
