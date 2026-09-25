@@ -82,9 +82,11 @@ export default function ProjectCarousel({ items }: { items: Featured[] }) {
           ))}
         </div>
 
-        {/* Tilted 3D ring — viewed from slightly above */}
+        {/* Tilted 3D ring — viewed from slightly above. pointer-events-none so the
+            tilted ring plane doesn't swallow clicks on the half of each card that
+            sits behind it in 3D space; cards re-enable pointer events themselves. */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 pointer-events-none"
           style={{ transformStyle: "preserve-3d", transform: `rotateX(${TILT_DEG}deg)` }}
         >
           {items.map((p, i) => {
